@@ -1,18 +1,24 @@
 'use strict'
 
 const Service = require('egg').Service
+const response = require('../utils/responseHelper')
 
 class MonitorService extends Service {
-  async select(monitor_id) {
-    const option = {
-      where: { monitor_id }
+  async select() {
+    const params = this.ctx.request.body
+    const {monitor_id} = params
+    let sql = `select * from monitor `
+    if (monitor_id) {
+      sql += `where monitor_id=${monitor_id}`
     }
-    const list = await this.app.mysql.select('monitor', option)
-    return { list }
+    const list = await this.app.mysql.query(sql)
+    return response(list)
   }
+
   async create() {
     const result = await this.app.mysql.insert('monitor', this.ctx.request.body)
-    return { result }
+    const isSuccess = result.affectedRows === 1
+    return response(isSuccess, isSuccess ? '添加成功' : '添加失败')
   }
   async update() {
     const params = this.ctx.request.body
@@ -22,11 +28,18 @@ class MonitorService extends Service {
       }
     }
     const result = await this.app.mysql.update('monitor', this.ctx.request.body, options)
-    return { result }
+    const isSuccess = result.affectedRows === 1
+    return response(isSuccess, isSuccess ? '修改成功' : '修改失败')
   }
-  async delete(monitor_id) {
-    const result = await this.app.mysql.delete('monitor', { monitor_id })
-    return { result }
+  async delete() {
+    const params = this.ctx.request.body
+    const { monitor_id } = params
+    const option = monitor_id && {
+      monitor_id
+    }
+    const result = await this.app.mysql.delete('monitor', option)
+    const isSuccess = result.affectedRows === 1
+    return response(isSuccess, isSuccess ? '删除成功' : '删除失败')
   }
 }
 
