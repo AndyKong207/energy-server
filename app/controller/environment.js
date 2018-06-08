@@ -3,25 +3,15 @@
 const Controller = require('egg').Controller
 
 class EnvrionmentController extends Controller {
-  async search() {
-    const list = await this.ctx.service.envrionment.select()
-    this.ctx.body = list
-  }
+
   async searchNew() {
+    console.log('111111', this.ctx.service)
     const envNew = await this.ctx.service.environment.searchNew()
     this.ctx.body = envNew
   }
   async create() {
-    const result = await this.ctx.service.envrionment.create()
-    this.ctx.body = result
-  }
-  async update() {
-    const result = await this.ctx.service.envrionment.update()
-    this.ctx.body = result
-  }
-  async delete() {
-    const id = this.ctx.query.id
-    const result = await this.ctx.service.envrionment.delete(id)
+    console.log('===', this.ctx.service)
+    const result = await this.ctx.service.environment.create()
     this.ctx.body = result
   }
 }

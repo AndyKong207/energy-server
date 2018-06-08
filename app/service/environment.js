@@ -17,9 +17,10 @@ class EnvironmentService extends Service {
   }
 
   async create() {
-    console.log(this.ctx.request.body)
+    console.log('fuckcufkcjskdfjlasfjas;fj')
     const result = await this.app.mysql.insert('environment', this.ctx.request.body)
-    return { result }
+    const isSuccess = result.affectedRows === 1
+    return response(isSuccess, isSuccess ? '添加成功' : '添加失败')
   }
 }
 
