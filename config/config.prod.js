@@ -34,5 +34,9 @@ module.exports = appInfo => {
     },
   }
 
+  config.logger = {
+    dir: '/log',
+  }
+
   return config;
 }
