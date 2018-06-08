@@ -1,18 +1,22 @@
 'use strict'
 
 const Service = require('egg').Service
+const response = require('../utils/responseHelper')
 
 class EnergyTypeService extends Service {
-  async select(energy_type_id) {
+  async select() {
+    const params = this.ctx.request.body
+    const { energy_type_id } = params
     const option = {
-      where: { energy_type_id }
+      where: energy_type_id && { energy_type_id }
     }
     const list = await this.app.mysql.select('energy_type', option)
-    return { list }
+    return response(list)
   }
   async create() {
     const result = await this.app.mysql.insert('energy_type', this.ctx.request.body)
-    return { result }
+    const isSuccess = result.affectedRows === 1
+    return response(isSuccess, isSuccess ? '添加成功' : '添加失败')
   }
   async update() {
     const params = this.ctx.request.body
@@ -22,11 +26,18 @@ class EnergyTypeService extends Service {
       }
     }
     const result = await this.app.mysql.update('energy_type', this.ctx.request.body, options)
-    return { result }
+    const isSuccess = result.affectedRows === 1
+    return response(isSuccess, isSuccess ? '修改成功' : '修改失败')
   }
-  async delete(energy_type_id) {
-    const result = await this.app.mysql.delete('energy_type', { energy_type_id })
-    return { result }
+  async delete() {
+    const params = this.ctx.request.body
+    const { energy_type_id } = params
+    const option = energy_type_id && {
+      energy_type_id
+    }
+    const result = await this.app.mysql.delete('energy_type', option)
+    const isSuccess = result.affectedRows === 1
+    return response(isSuccess, isSuccess ? '删除成功' : '删除失败')
   }
 }
 

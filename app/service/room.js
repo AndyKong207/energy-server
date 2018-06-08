@@ -1,18 +1,26 @@
 'use strict'
 
 const Service = require('egg').Service
+const response = require('../utils/responseHelper')
 
 class RoomService extends Service {
-  async select(room_id) {
-    const option = {
-      where: { room_id }
+  async select() {
+    const params = this.ctx.request.body
+    const {room_id} = params
+
+    let sql = `select * from room R 
+    inner join building B on R.building_id=B.building_id `
+    if (room_id) {
+      sql += `where room_id=${room_id}`
     }
-    const list = await this.app.mysql.select('room', option)
-    return { list }
+    const list = await this.app.mysql.query(sql)
+    return response(list)
   }
+
   async create() {
     const result = await this.app.mysql.insert('room', this.ctx.request.body)
-    return { result }
+    const isSuccess = result.affectedRows === 1
+    return response(isSuccess, isSuccess ? '添加成功' : '添加失败')
   }
   async update() {
     const params = this.ctx.request.body
@@ -22,11 +30,18 @@ class RoomService extends Service {
       }
     }
     const result = await this.app.mysql.update('room', this.ctx.request.body, options)
-    return { result }
+    const isSuccess = result.affectedRows === 1
+    return response(isSuccess, isSuccess ? '修改成功' : '修改失败')
   }
-  async delete(room_id) {
-    const result = await this.app.mysql.delete('room', { room_id })
-    return { result }
+  async delete() {
+    const params = this.ctx.request.body
+    const { room_id } = params
+    const option = room_id && {
+      room_id
+    }
+    const result = await this.app.mysql.delete('room', option)
+    const isSuccess = result.affectedRows === 1
+    return response(isSuccess, isSuccess ? '删除成功' : '删除失败')
   }
 }
 

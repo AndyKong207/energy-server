@@ -7,6 +7,10 @@ class EnvrionmentController extends Controller {
     const list = await this.ctx.service.envrionment.select()
     this.ctx.body = list
   }
+  async searchNew() {
+    const envNew = await this.ctx.service.environment.searchNew()
+    this.ctx.body = envNew
+  }
   async create() {
     const result = await this.ctx.service.envrionment.create()
     this.ctx.body = result

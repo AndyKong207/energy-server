@@ -1,18 +1,22 @@
 'use strict'
 
 const Service = require('egg').Service
+const response = require('../utils/responseHelper')
 
 class DeviceTypeService extends Service {
-  async select(device_type_id) {
+  async select() {
+    const params = this.ctx.request.body
+    const { device_type_id } = params
     const option = {
-      where: { device_type_id }
+      where: device_type_id && { device_type_id }
     }
     const list = await this.app.mysql.select('device_type', option)
-    return { list }
+    return response(list)
   }
   async create() {
     const result = await this.app.mysql.insert('device_type', this.ctx.request.body)
-    return { result }
+    const isSuccess = result.affectedRows === 1
+    return response(isSuccess, isSuccess ? '添加成功' : '添加失败')
   }
   async update() {
     const params = this.ctx.request.body
@@ -22,11 +26,18 @@ class DeviceTypeService extends Service {
       }
     }
     const result = await this.app.mysql.update('device_type', this.ctx.request.body, options)
-    return { result }
+    const isSuccess = result.affectedRows === 1
+    return response(isSuccess, isSuccess ? '修改成功' : '修改失败')
   }
-  async delete(device_type_id) {
-    const result = await this.app.mysql.delete('device_type', { device_type_id })
-    return { result }
+  async delete() {
+    const params = this.ctx.request.body
+    const { device_type_id } = params
+    const option = device_type_id && {
+      device_type_id
+    }
+    const result = await this.app.mysql.delete('device_type', option)
+    const isSuccess = result.affectedRows === 1
+    return response(isSuccess, isSuccess ? '删除成功' : '删除失败')
   }
 }
 

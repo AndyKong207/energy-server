@@ -7,10 +7,12 @@ class AreaService extends Service {
   async select() {
     const params = this.ctx.request.body
     const {area_id} = params
-    const option = {
-      where: area_id && {area_id}
+    let sql = `select * from area A 
+    inner join organization ORG on A.org_id = ORG.org_id `
+    if (area_id) {
+      sql += `where area_id=${area_id}`
     }
-    const list = await this.app.mysql.select('area', option)
+    const list = await this.app.mysql.query(sql)
     return response(list)
   }
 
