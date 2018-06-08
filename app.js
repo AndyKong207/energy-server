@@ -9,11 +9,7 @@
 //     app.database = app.mysql.createInstance(mysqlConfig);
 //   })
 // }
-// module.exports = app => {
-//   app.beforeStart(async () => {
-//     console.log(app.configCenter.mysql, 1)
-//     // const mysqlConfig = await app.configCenter.fetch('mysql')
-//     const mysqlConfig = await app.config.mysql.client
-//     app.database = app.mysql.createInstance(mysqlConfig)
-//   })
-// }
+module.exports = app => {
+  app.config.coreMiddleware.unshift('getRequestPath');
+
+}
